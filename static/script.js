@@ -21,7 +21,7 @@ async function displayEvents() {
 
         let seconds = Math.floor(total % 60);
         let minutes = Math.floor((total / 60) % 60)
-        let hours = Math.floor((minutes / 3600) % 60)
+        let hours = Math.floor((total / 3600) % 60)
 
         let div = document.createElement("div")
         div.classList.add("logged-activity")

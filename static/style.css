@@ -35,3 +35,22 @@ body {
     width: 1.5em;
     height: 1.5em;
 }
+
+#logged_activities {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+
+.logged-activity {
+    padding: 1em;
+    background: #212121;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    width: 20em;
+}
+
+.logged-activity > h2 {
+    font-size: 1em;
+}

@@ -24,13 +24,26 @@ async function displayEvents() {
         let hours = Math.floor((minutes / 3600) % 60)
 
         let div = document.createElement("div")
+        div.classList.add("logged-activity")
 
         let header = document.createElement("h2")
         header.innerText = curr["activity"]
         div.append(header)
 
         let time = document.createElement("p")
-        time.innerText = hours.toString() + "hrs " + minutes.toString() + "mins " + seconds.toString() + "secs"
+        if (hours > 0) {
+            time.innerText += hours.toString() + " hrs"
+        }
+        if (minutes > 0) {
+            if (time.innerHTML.length > 0) {
+                time.innerHTML += " "
+            }
+            time.innerHTML += minutes.toString() + " mins"
+        }
+        if (time.innerHTML.length > 0) {
+            time.innerHTML += " "
+        }
+        time.innerHTML += seconds.toString() + " secs"
         div.append(time)
 
         container.append(div)

@@ -11,4 +11,4 @@ COPY backend.py ./
 COPY templates/ ./templates/
 COPY static/ ./static
 
-CMD [ "python3", "-m", "gunicorn", "-w4", "-b", "0.0.0.0:8000", "backend:app" ]
+CMD [ "python3", "-m", "gunicorn", "-w1", "-b", "0.0.0.0:8000", "backend:app" ]

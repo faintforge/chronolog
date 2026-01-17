@@ -1,0 +1,37 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: "Roboto", sans-serif;
+}
+
+body {
+    background: #181818;
+    color: white;
+    display: flex;
+    justify-content: center;
+}
+
+.container {
+    width: 100%;
+    max-width: 40em;
+}
+
+#activity_container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2em;
+}
+
+.activity {
+    display: flex;
+    gap: 0.2em;
+    flex-direction: row;
+    align-items: center;
+    font-size: 1.5em;
+}
+
+.activity input {
+    width: 1.5em;
+    height: 1.5em;
+}

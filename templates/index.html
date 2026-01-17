@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chronolog</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wdth,wght@0,75..100,100..900;1,75..100,100..900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Chronolog</h1>
+        </header>
+
+        <main>
+            <div id="activity_container"></div>
+            <!-- <div class="activity"> -->
+            <!--     <input type="radio" name="activity" id="uncategorized"> -->
+            <!--     <label for="uncategorized">Uncategorized</label> -->
+            <!-- </div> -->
+            <!---->
+            <!-- <div class="activity"> -->
+            <!--     <input type="radio" name="activity" id="programming"> -->
+            <!--     <label for="programming">Programming</label> -->
+            <!-- </div> -->
+            <!---->
+            <!-- <div class="activity"> -->
+            <!--     <input type="radio" name="activity" id="studying"> -->
+            <!--     <label for="studying">Studying</label> -->
+            <!-- </div> -->
+            <!---->
+            <!-- <div class="activity"> -->
+            <!--     <input type="radio" name="activity" id="reading"> -->
+            <!--     <label for="reading">Reading</label> -->
+            <!-- </div> -->
+            <!---->
+            <!-- <div class="activity"> -->
+            <!--     <input type="radio" name="activity" id="porn"> -->
+            <!--     <label for="porn">Porn</label> -->
+            <!-- </div> -->
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

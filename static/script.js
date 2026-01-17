@@ -1,14 +1,52 @@
+async function displayEvents() {
+    const timestamps = await fetch("api/timestamps", {method: "GET"})
+        .then(res => res.json())
+    const container = document.getElementById("logged_activities")
+    while (container.lastChild) {
+        container.removeChild(container.lastChild)
+    }
+
+    // Add a temporary timestamp of current time so you get up-to-date data on
+    // the current activity.
+    timestamps.push({
+        "posix": Date.now() / 1000.0,
+        "activity": "qwerty"
+    })
+
+    for (let i = timestamps.length - 2; i >= 0; i--) {
+        let curr = timestamps[i]
+        let next = timestamps[i + 1]
+
+        let total = next["posix"] - curr["posix"]
+
+        let seconds = Math.floor(total % 60);
+        let minutes = Math.floor((total / 60) % 60)
+        let hours = Math.floor((minutes / 3600) % 60)
+
+        let div = document.createElement("div")
+
+        let header = document.createElement("h2")
+        header.innerText = curr["activity"]
+        div.append(header)
+
+        let time = document.createElement("p")
+        time.innerText = hours.toString() + "hrs " + minutes.toString() + "mins " + seconds.toString() + "secs"
+        div.append(time)
+
+        container.append(div)
+    }
+}
+
 async function newTimestamp(ev) {
     let activity = ev.target.id
-    let response = await fetch("/api/activity", {
+    await fetch("/api/activity", {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({"activity": activity})
     })
-        .then(res => res.json())
-    console.log(response)
+    await displayEvents()
 }
 
 function buildActivitySelector(activities) {
@@ -20,7 +58,7 @@ function buildActivitySelector(activities) {
         let input = document.createElement("input")
         input.type = "radio"
         input.name = "activity"
-        input.id = activity;
+        input.id = activity
         input.onclick = newTimestamp
         container.appendChild(input)
 
@@ -51,6 +89,7 @@ const ACTIVITIES = [
     "youtube",
     "reddit",
     "porn",
-];
+]
 buildActivitySelector(ACTIVITIES)
 setCurrentActivity()
+displayEvents()

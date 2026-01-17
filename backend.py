@@ -34,6 +34,9 @@ class DB:
         }
         self.timestamps.append(timestamp)
 
+    def get_timestamps(self):
+        return self.timestamps
+
 app = Flask(__name__)
 app.template_folder = "templates"
 app.static_folder = "static"
@@ -52,8 +55,13 @@ class Activity(Resource):
         db.write_file()
         return db.get_last(), 200
 
+class Timestamps(Resource):
+    def get(self):
+        return db.get_timestamps(), 200
+
 api = Api(app)
 api.add_resource(Activity, "/api/activity")
+api.add_resource(Timestamps, "/api/timestamps")
 
 @app.route("/")
 def index():

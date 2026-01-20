@@ -23,7 +23,7 @@ body {
     gap: 0.2em;
 }
 
-.activity {
+#activity_container > .activity {
     display: flex;
     gap: 0.2em;
     flex-direction: row;
@@ -31,7 +31,7 @@ body {
     font-size: 1.5em;
 }
 
-.activity input {
+#activity_container > .activity > input {
     width: 1.5em;
     height: 1.5em;
 }
@@ -42,7 +42,7 @@ body {
     gap: 1em;
 }
 
-.logged-activity {
+#logged_activities > .logged-activity {
     padding: 1em;
     background: #212121;
     border-radius: 5px;
@@ -51,7 +51,7 @@ body {
     width: 20em;
 }
 
-.logged-activity > h2 {
+#logged_activities > .logged-activity > h2 {
     font-size: 1em;
 }
 
@@ -63,9 +63,20 @@ body {
     max-width: 25em;
 }
 
-#day > div {
-    display: grid;
+#day > .header {
+    display: flex;
     flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#day > .header > p {
+    font-size: 1.5em;
+    cursor: pointer;
+}
+
+#day > .activity {
+    display: grid;
     gap: 1em;
     grid-template-rows: 1fr;
     grid-template-columns: repeat(3, 1fr);

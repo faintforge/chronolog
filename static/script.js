@@ -144,17 +144,36 @@ async function displayDaysEvents(day) {
         total_time_tracked += seconds_elasped
     }
 
-    const day_container = document.getElementById("day")
+    let day_container = document.getElementById("day")
+    while (day_container.lastChild) {
+        day_container.removeChild(day_container.lastChild)
+    }
+
+    let header = document.createElement("div")
+    header.classList.add("header")
+
+    let prev_p = document.createElement("p")
+    prev_p.innerHTML = "&lt;"
+    prev_p.onclick = () => changeDay(-1)
+    header.append(prev_p)
 
     let date_h2 = document.createElement("h2")
     let year_str = String(midnight.getFullYear()).padStart(2, "0")
     let month_str = String(midnight.getMonth() + 1).padStart(2, "0")
     let day_str = String(midnight.getDate()).padStart(2, "0")
     date_h2.innerText = `${year_str}/${month_str}/${day_str}`
-    day_container.append(date_h2)
+    header.append(date_h2)
+
+    let next_p = document.createElement("p")
+    next_p.innerHTML = "&gt;"
+    next_p.onclick = () => changeDay(1)
+    header.append(next_p)
+
+    day_container.append(header)
 
     total_activity_time.forEach((total, activity) => {
         let container = document.createElement("div")
+        container.classList.add("activity")
 
         let activity_p = document.createElement("p")
         activity_p.innerText = activity
@@ -195,4 +214,11 @@ const ACTIVITIES = [
 buildActivitySelector(ACTIVITIES)
 setCurrentActivity()
 displayEvents()
-displayDaysEvents(Date.now())
+
+let displayedDay = new Date(Date.now())
+async function changeDay(delta) {
+    const MILLISECONDS_IN_DAY = 24*60*60*1000;
+    displayedDay = new Date(displayedDay.getTime() + MILLISECONDS_IN_DAY*delta)
+    await displayDaysEvents(displayedDay)
+}
+displayDaysEvents(displayedDay)

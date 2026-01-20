@@ -1,3 +1,8 @@
+:root {
+    --red: #fb4934;
+    --aqua: #8ec07c;
+}
+
 * {
     padding: 0;
     margin: 0;
@@ -17,23 +22,54 @@ body {
     max-width: 40em;
 }
 
-#activity_container {
+header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2em;
+}
+
+main {
     display: flex;
     flex-direction: column;
-    gap: 0.2em;
-}
-
-#activity_container > .activity {
-    display: flex;
-    gap: 0.2em;
-    flex-direction: row;
+    gap: 1em;
     align-items: center;
-    font-size: 1.5em;
 }
 
-#activity_container > .activity > input {
-    width: 1.5em;
-    height: 1.5em;
+#activity_selector {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 5px;
+    width: 100%;
+}
+
+#activity_selector > input {
+    padding: 1em;
+    background: #212121;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    border: 2px solid #212121;
+    color: white;
+    cursor: pointer;
+}
+
+#activity_selector > input:disabled {
+    background: #313131;
+    cursor: default;
+}
+
+#activity_selector > input:hover:enabled {
+    border: 2px solid var(--aqua);
+    background: #313131;
+}
+
+#activity_selector > input:active:enabled {
+    transform: translateY(5px);
+}
+
+#activity_selector > input.active {
+    border: 2px solid var(--red);
 }
 
 #logged_activities {

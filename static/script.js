@@ -53,8 +53,7 @@ async function displayEvents() {
     }
 }
 
-async function newTimestamp(ev) {
-    let activity = ev.target.id
+async function newTimestamp(activity) {
     await fetch("/api/activity", {
         method: "PUT",
         headers: {
@@ -63,27 +62,30 @@ async function newTimestamp(ev) {
         body: JSON.stringify({"activity": activity})
     })
     await displayEvents()
+    await displayDaysEvents(displayed_day)
 }
 
 function buildActivitySelector(activities) {
-    const activity_container = document.getElementById("activity_container")
+    const activity_selector = document.getElementById("activity_selector")
     activities.forEach((activity) => {
-        let container = document.createElement("div")
-        container.classList.add("activity")
-
         let input = document.createElement("input")
-        input.type = "radio"
+
+        input.type = "button"
         input.name = "activity"
+        input.value = activity
         input.id = activity
-        input.onclick = newTimestamp
-        container.appendChild(input)
+        input.onclick = (ev) => {
+            let currently_active = document.querySelector("input[disabled].active")
+            currently_active.disabled = false;
+            currently_active.classList.remove("active")
 
-        let label = document.createElement("label")
-        label.setAttribute("for", activity)
-        label.innerHTML = activity
-        container.appendChild(label)
+            ev.target.classList.add("active")
+            ev.target.disabled = true
 
-        activity_container.appendChild(container)
+            newTimestamp(ev.target.id)
+        }
+
+        activity_selector.appendChild(input)
     })
 }
 
@@ -92,8 +94,8 @@ async function setCurrentActivity() {
         .then(res => res.json())
         .then(data => data.activity)
     let to_be_checked = document.getElementById(current_activity)
-    to_be_checked.clicked = true
-    to_be_checked.click()
+    to_be_checked.classList.add("active")
+    to_be_checked.disabled = true
 }
 
 /**
@@ -231,10 +233,10 @@ buildActivitySelector(ACTIVITIES)
 setCurrentActivity()
 displayEvents()
 
-let displayedDay = new Date(Date.now())
+let displayed_day = new Date(Date.now())
 async function changeDay(delta) {
     const MILLISECONDS_IN_DAY = 24*60*60*1000;
-    displayedDay = new Date(displayedDay.getTime() + MILLISECONDS_IN_DAY*delta)
-    await displayDaysEvents(displayedDay)
+    displayed_day = new Date(displayed_day.getTime() + MILLISECONDS_IN_DAY*delta)
+    await displayDaysEvents(displayed_day)
 }
-displayDaysEvents(displayedDay)
+displayDaysEvents(displayed_day)

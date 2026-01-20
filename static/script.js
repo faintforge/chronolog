@@ -1,4 +1,5 @@
 import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+mermaid.initialize({ theme: "dark" })
 
 async function displayEvents() {
     const timestamps = await fetch("api/timestamps", {method: "GET"})
@@ -204,7 +205,6 @@ async function displayDaysEvents(day) {
 
         day_container.append(container)
     })
-    console.log(pie_src)
 
     // Pie chart
     let pie_pre = document.createElement("pre")
@@ -236,5 +236,3 @@ async function changeDay(delta) {
     await displayDaysEvents(displayedDay)
 }
 displayDaysEvents(displayedDay)
-
-mermaid.initialize({ startOnLoad: false })

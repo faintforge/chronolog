@@ -93,24 +93,10 @@ async function setCurrentActivity() {
     to_be_checked.click()
 }
 
-const ACTIVITIES = [
-    "uncategorized",
-    "programming",
-    "reading",
-    "piano",
-    "studying",
-    "youtube",
-    "reddit",
-    "porn",
-]
-buildActivitySelector(ACTIVITIES)
-setCurrentActivity()
-displayEvents()
-
 /**
  * @param {Date} day
  */
-async function daysEvents(day) {
+async function displayDaysEvents(day) {
     /** @type {Array} */
     const timestamps = await fetch("api/timestamps", {method: "GET"})
         .then(res => res.json())
@@ -158,15 +144,55 @@ async function daysEvents(day) {
         total_time_tracked += seconds_elasped
     }
 
+    const day_container = document.getElementById("day")
+
+    let date_h2 = document.createElement("h2")
+    let year_str = String(midnight.getFullYear()).padStart(2, "0")
+    let month_str = String(midnight.getMonth() + 1).padStart(2, "0")
+    let day_str = String(midnight.getDate()).padStart(2, "0")
+    date_h2.innerText = `${year_str}/${month_str}/${day_str}`
+    day_container.append(date_h2)
+
     total_activity_time.forEach((total, activity) => {
-        let seconds = Math.floor(total % 60);
+        let container = document.createElement("div")
+
+        let activity_p = document.createElement("p")
+        activity_p.innerText = activity
+        container.append(activity_p)
+
+        let percent_p = document.createElement("p")
+        let percent = Math.round(total / total_time_tracked * 1000) / 10
+        percent_p.innerText = `${percent.toString()}%`
+        container.append(percent_p)
+
+        let time_p = document.createElement("p")
+        let seconds = Math.floor(total % 60)
         let minutes = Math.floor((total / 60) % 60)
         let hours = Math.floor((total / 3600) % 60)
-        let percent = Math.round(total / total_time_tracked * 1000) / 10
+        if (hours > 0) {
+            time_p.innerText = `${hours}h ${minutes}min ${seconds}s`
+        } else if (minutes > 0) {
+            time_p.innerText = `${minutes}min ${seconds}s`
+        } else {
+            time_p.innerText = `${seconds}s`
+        }
+        container.append(time_p)
 
-        console.log(activity, percent, `${hours} hrs ${minutes} mins ${seconds} secs`)
+        day_container.append(container)
     })
 }
 
-const SECONDS_IN_DAY = 24*60*60;
-daysEvents(new Date(Date.now() - (SECONDS_IN_DAY*2)*1000))
+const ACTIVITIES = [
+    "uncategorized",
+    "programming",
+    "reading",
+    "piano",
+    "studying",
+    "youtube",
+    "reddit",
+    "porn",
+]
+buildActivitySelector(ACTIVITIES)
+setCurrentActivity()
+displayEvents()
+displayDaysEvents(Date.now())

@@ -45,7 +45,7 @@ body {
 .logged-activity {
     padding: 1em;
     background: #212121;
-    border-radius: 8px;
+    border-radius: 5px;
     display: flex;
     justify-content: space-between;
     width: 20em;
@@ -53,4 +53,21 @@ body {
 
 .logged-activity > h2 {
     font-size: 1em;
+}
+
+#day {
+    background: #212121;
+    padding: 1em;
+    border-radius: 5px;
+    width: 100%;
+    max-width: 25em;
+}
+
+#day > div {
+    display: grid;
+    flex-direction: row;
+    gap: 1em;
+    grid-template-rows: 1fr;
+    grid-template-columns: repeat(3, 1fr);
+    align-items: center;
 }

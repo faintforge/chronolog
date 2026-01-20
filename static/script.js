@@ -216,6 +216,7 @@ async function displayDaysEvents(day) {
 
 const ACTIVITIES = [
     "uncategorized",
+    "sleep",
     "programming",
     "reading",
     "piano",

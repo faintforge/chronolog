@@ -32,6 +32,11 @@ class DB:
             "posix": now.timestamp(),
             "activity": activity
         }
+        # If an activity has only been performed for less than 10 seconds it
+        # won't be logged
+        if not allow_duplicate:
+            if now.timestamp() - self.get_last()["posix"] < 10.0:
+                self.timestamps.pop()
         self.timestamps.append(timestamp)
 
     def get_timestamps(self):

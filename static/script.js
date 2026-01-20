@@ -1,3 +1,5 @@
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+
 async function displayEvents() {
     const timestamps = await fetch("api/timestamps", {method: "GET"})
         .then(res => res.json())
@@ -171,7 +173,10 @@ async function displayDaysEvents(day) {
 
     day_container.append(header)
 
+    let pie_src = "pie"
     total_activity_time.forEach((total, activity) => {
+        pie_src += `\n    "${activity}":${total}`
+
         let container = document.createElement("div")
         container.classList.add("activity")
 
@@ -199,6 +204,14 @@ async function displayDaysEvents(day) {
 
         day_container.append(container)
     })
+    console.log(pie_src)
+
+    // Pie chart
+    let pie_pre = document.createElement("pre")
+    pie_pre.classList.add("mermaid")
+    pie_pre.innerHTML = pie_src
+    day_container.append(pie_pre)
+    mermaid.run()
 }
 
 const ACTIVITIES = [
@@ -222,3 +235,5 @@ async function changeDay(delta) {
     await displayDaysEvents(displayedDay)
 }
 displayDaysEvents(displayedDay)
+
+mermaid.initialize({ startOnLoad: false })

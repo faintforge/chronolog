@@ -1,9 +1,10 @@
 import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
 mermaid.initialize({ theme: "dark" })
 
-async function displayEvents() {
-    const timestamps = await fetch("api/timestamps", {method: "GET"})
-        .then(res => res.json())
+let timestamps = []
+let displayed_day = new Date(Date.now())
+
+function displayEvents() {
     // Add a temporary timestamp of current time so you get up-to-date data on
     // the current activity.
     timestamps.push({
@@ -51,60 +52,14 @@ async function displayEvents() {
 
         container.append(div)
     }
-}
 
-async function newTimestamp(activity) {
-    await fetch("/api/activity", {
-        method: "PUT",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({"activity": activity})
-    })
-    await displayEvents()
-    await displayDaysEvents(displayed_day)
-}
-
-function buildActivitySelector(activities) {
-    const activity_selector = document.getElementById("activity_selector")
-    activities.forEach((activity) => {
-        let input = document.createElement("input")
-
-        input.type = "button"
-        input.name = "activity"
-        input.value = activity
-        input.id = activity
-        input.onclick = (ev) => {
-            let currently_active = document.querySelector("input[disabled].active")
-            currently_active.disabled = false;
-            currently_active.classList.remove("active")
-
-            ev.target.classList.add("active")
-            ev.target.disabled = true
-
-            newTimestamp(ev.target.id)
-        }
-
-        activity_selector.appendChild(input)
-    })
-}
-
-async function setCurrentActivity() {
-    const current_activity = await fetch("api/activity", {method: "GET"})
-        .then(res => res.json())
-        .then(data => data.activity)
-    let to_be_checked = document.getElementById(current_activity)
-    to_be_checked.classList.add("active")
-    to_be_checked.disabled = true
+    timestamps.pop()
 }
 
 /**
  * @param {Date} day
  */
-async function displayDaysEvents(day) {
-    /** @type {Array} */
-    const timestamps = await fetch("api/timestamps", {method: "GET"})
-        .then(res => res.json())
+function displayDaysEvents(day) {
     // Add a temporary timestamp of current time so you get up-to-date data on
     // the current activity.
     timestamps.push({
@@ -216,27 +171,79 @@ async function displayDaysEvents(day) {
         day_container.append(pie_pre)
         mermaid.run()
     }
+
+    timestamps.pop()
 }
 
-const ACTIVITIES = [
-    "uncategorized",
-    "sleep",
-    "programming",
-    "reading",
-    "piano",
-    "studying",
-    "youtube",
-    "reddit",
-    "porn",
-]
-buildActivitySelector(ACTIVITIES)
-setCurrentActivity()
-displayEvents()
+async function newTimestamp(activity) {
+    timestamps = await fetch("/api/activity", {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({"activity": activity})
+    }).then(res => res.json())
+    displayEvents()
+    displayDaysEvents(displayed_day)
+}
 
-let displayed_day = new Date(Date.now())
-async function changeDay(delta) {
+function buildActivitySelector(activities) {
+    const activity_selector = document.getElementById("activity_selector")
+    activities.forEach((activity) => {
+        let input = document.createElement("input")
+
+        input.type = "button"
+        input.name = "activity"
+        input.value = activity
+        input.id = activity
+        input.onclick = (ev) => {
+            let currently_active = document.querySelector("input[disabled].active")
+            currently_active.disabled = false;
+            currently_active.classList.remove("active")
+
+            ev.target.classList.add("active")
+            ev.target.disabled = true
+
+            newTimestamp(ev.target.id)
+        }
+
+        activity_selector.appendChild(input)
+    })
+}
+
+function setCurrentActivity() {
+    if (timestamps.length == 0) {
+        return;
+    }
+
+    let current_activity = timestamps[timestamps.length - 1].activity
+    let to_be_checked = document.getElementById(current_activity)
+    to_be_checked.classList.add("active")
+    to_be_checked.disabled = true
+}
+
+function changeDay(delta) {
     const MILLISECONDS_IN_DAY = 24*60*60*1000;
     displayed_day = new Date(displayed_day.getTime() + MILLISECONDS_IN_DAY*delta)
-    await displayDaysEvents(displayed_day)
+    displayDaysEvents(displayed_day)
 }
-displayDaysEvents(displayed_day)
+
+fetch("api/activity", {method: "GET"})
+    .then(res => res.json()).then(data => {
+    timestamps = data
+    const ACTIVITIES = [
+        "uncategorized",
+        "sleep",
+        "programming",
+        "reading",
+        "piano",
+        "studying",
+        "youtube",
+        "reddit",
+        "porn",
+    ]
+    buildActivitySelector(ACTIVITIES)
+    setCurrentActivity()
+    displayEvents()
+    displayDaysEvents(displayed_day)
+})

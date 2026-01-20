@@ -54,7 +54,7 @@ db.load_file()
 
 class Activity(Resource):
     def get(self):
-        return db.get_last(), 200
+        return db.get_timestamps(), 200
 
     def put(self):
         parser = reqparse.RequestParser(bundle_errors=True)
@@ -62,15 +62,10 @@ class Activity(Resource):
         args = parser.parse_args()
         db.add_timestamp(args["activity"])
         db.write_file()
-        return db.get_last(), 200
-
-class Timestamps(Resource):
-    def get(self):
         return db.get_timestamps(), 200
 
 api = Api(app)
 api.add_resource(Activity, "/api/activity")
-api.add_resource(Timestamps, "/api/timestamps")
 
 @app.route("/")
 def index():

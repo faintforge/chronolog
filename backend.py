@@ -37,7 +37,11 @@ class DB:
         if not allow_duplicate:
             if now.timestamp() - self.get_last()["posix"] < 10.0:
                 self.timestamps.pop()
-        self.timestamps.append(timestamp)
+            if self.get_last()["activity"] != activity:
+                self.timestamps.append(timestamp)
+        else:
+            self.timestamps.append(timestamp)
+
 
     def get_timestamps(self):
         return self.timestamps

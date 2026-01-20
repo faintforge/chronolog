@@ -6,10 +6,10 @@ async function displayEvents() {
         .then(res => res.json())
     // Add a temporary timestamp of current time so you get up-to-date data on
     // the current activity.
-        timestamps.push({
-            "posix": Date.now() / 1000.0,
-            "activity": "qwerty"
-        })
+    timestamps.push({
+        "posix": Date.now() / 1000.0,
+        "activity": "qwerty"
+    })
 
     const container = document.getElementById("logged_activities")
     while (container.lastChild) {

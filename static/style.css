@@ -81,4 +81,5 @@ body {
     grid-template-rows: 1fr;
     grid-template-columns: repeat(3, 1fr);
     align-items: center;
+    font-size: 1.0em;
 }

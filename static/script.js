@@ -206,12 +206,14 @@ async function displayDaysEvents(day) {
         day_container.append(container)
     })
 
-    // Pie chart
-    let pie_pre = document.createElement("pre")
-    pie_pre.classList.add("mermaid")
-    pie_pre.innerHTML = pie_src
-    day_container.append(pie_pre)
-    mermaid.run()
+    // Only render pie chart if we have data
+    if (pie_src != "pie") {
+        let pie_pre = document.createElement("pre")
+        pie_pre.classList.add("mermaid")
+        pie_pre.innerHTML = pie_src
+        day_container.append(pie_pre)
+        mermaid.run()
+    }
 }
 
 const ACTIVITIES = [

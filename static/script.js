@@ -25,7 +25,7 @@ function displayEvents() {
 
         let seconds = Math.floor(total % 60);
         let minutes = Math.floor((total / 60) % 60)
-        let hours = Math.floor((total / 3600) % 60)
+        let hours = Math.floor((total / 3600))
 
         let div = document.createElement("div")
         div.classList.add("logged-activity")
@@ -57,9 +57,10 @@ function displayEvents() {
 }
 
 /**
- * @param {Date} day
+ * @param {Date} start
+ * @param {Date} end
  */
-function displayDaysEvents(day) {
+function getEventsInSpan(start, end) {
     // Add a temporary timestamp of current time so you get up-to-date data on
     // the current activity.
     timestamps.push({
@@ -67,41 +68,60 @@ function displayDaysEvents(day) {
         "activity": "qwerty"
     })
 
-    let midnight = new Date(day);
+    const start_time = start.getTime() / 1000.0
+    const end_time = end.getTime() / 1000.0
+
+    let events = []
+    for (let i = 0; i < timestamps.length - 1; i++) {
+        let curr = timestamps[i]
+        let next = timestamps[i+1]
+
+        if (next.posix < start_time) {
+            continue
+        }
+
+        if (curr.posix > end_time) {
+            continue
+        }
+
+        // Clone the event since it's passed by reference by default so if an
+        // event gets truncated then it will update the global timestamps array
+        // too.
+        let clone = structuredClone(curr)
+        events.push(clone)
+    }
+
+    timestamps.pop();
+
+    return events
+}
+
+/**
+ * @param {Date} day
+ */
+function displayDaysEvents(day) {
+    let midnight = new Date(day)
     midnight.setHours(0, 0, 0, 0)
-    let midnightPosix = midnight.getTime() / 1000.0
-    const SECONDS_IN_DAY = 24*60*60;
+    const MILLISECONDS_IN_DAY = 24*60*60*1000
+    let next_day = new Date(midnight.getTime() + MILLISECONDS_IN_DAY)
+
+    let events = getEventsInSpan(midnight, next_day)
+    if (events.length > 0) {
+        events[0].posix = midnight.getTime() / 1000.0
+    }
+    events.push({"activity": "qwerty", "posix": next_day.getTime() / 1000.0})
 
     let total_time_tracked = 0
     let total_activity_time = new Map()
-    for (let i = 0; i < timestamps.length - 1; i++) {
-        let curr = timestamps[i];
-        let next = timestamps[i+1];
-
-        // This event is irrelevant
-        if (next.posix < midnightPosix ||
-            curr.posix >= midnightPosix + SECONDS_IN_DAY) {
-            continue;
+    for (let i = 0; i < events.length - 1; i++) {
+        let curr = events[i]
+        let diff = events[i+1].posix - curr.posix
+        total_time_tracked += diff
+        let old = total_activity_time.get(curr.activity)
+        if (old == undefined) {
+            old = 0.0
         }
-
-        // This activity crosses the midnight boundry
-        if (curr.posix < midnightPosix && next.posix > midnightPosix) {
-            curr.posix = midnightPosix;
-        }
-
-        // Next activity crosses into next day
-        if (next.posix > midnightPosix + SECONDS_IN_DAY - 1) {
-            next.posix = midnightPosix + SECONDS_IN_DAY - 1;
-        }
-
-        let seconds_elasped = next.posix - curr.posix
-        if (!total_activity_time.has(curr.activity)) {
-            total_activity_time.set(curr.activity, seconds_elasped);
-        } else {
-            let old = total_activity_time.get(curr.activity);
-            total_activity_time.set(curr.activity, old + seconds_elasped);
-        }
-        total_time_tracked += seconds_elasped
+        total_activity_time.set(curr.activity, old + diff)
     }
 
     let day_container = document.getElementById("day")
@@ -171,8 +191,6 @@ function displayDaysEvents(day) {
         day_container.append(pie_pre)
         mermaid.run()
     }
-
-    timestamps.pop()
 }
 
 async function newTimestamp(activity) {

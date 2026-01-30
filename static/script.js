@@ -109,7 +109,7 @@ function displayDaysEvents(day) {
     if (events.length > 0) {
         events[0].posix = midnight.getTime() / 1000.0
     }
-    events.push({"activity": "qwerty", "posix": next_day.getTime() / 1000.0})
+    events.push({"activity": "qwerty", "posix": Date.now() / 1000.0})
 
     let total_time_tracked = 0
     let total_activity_time = new Map()

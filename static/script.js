@@ -154,6 +154,7 @@ function displayDaysEvents(day) {
         }
         total_activity_time.set(curr.activity, old + diff)
     }
+    total_activity_time = new Map([...total_activity_time.entries()].sort())
 
     let day_container = document.getElementById("day")
     while (day_container.lastChild) {
@@ -318,6 +319,7 @@ function weekAverage() {
         }
         weekly_activity.set(curr.activity, old + diff)
     }
+    weekly_activity = new Map([...weekly_activity.entries()].sort())
 
     let week_container = document.getElementById("week")
     while (week_container.lastChild) {

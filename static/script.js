@@ -307,6 +307,10 @@ function weekAverage() {
     days_passed /= 1000*60*60*24
 
     let events = getEventsInSpan(span_start, span_end)
+    if (events.length > 0) {
+        events[0].posix = span_start.getTime() / 1000.0
+    }
+    events.push({"activity": "qwerty", "posix": span_end.getTime() / 1000})
 
     let weekly_activity = new Map()
     for (let i = 0; i < events.length - 1; i++) {

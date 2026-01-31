@@ -200,15 +200,14 @@ function displayDaysEvents(day) {
         container.append(percent_p)
 
         let time_p = document.createElement("p")
-        let seconds = Math.floor(total % 60)
         let minutes = Math.floor((total / 60) % 60)
-        let hours = Math.floor(total / 3600)
-        if (hours > 0) {
-            time_p.innerText = `${hours}h ${minutes}min ${seconds}s`
+        let hours = Math.floor(total / 3600 * 10) / 10
+        if (hours >= 1) {
+            time_p.innerText = `${hours} hrs`
         } else if (minutes > 0) {
-            time_p.innerText = `${minutes}min ${seconds}s`
+            time_p.innerText = `${minutes} mins`
         } else {
-            time_p.innerText = `${seconds}s`
+            time_p.innerText = `${minutes} sec`
         }
         container.append(time_p)
 
@@ -353,15 +352,12 @@ function weekAverage() {
 
         let avg_p = document.createElement("p")
         let avg = total / days_passed
-        let seconds = Math.floor(avg % 60)
         let minutes = Math.floor((avg / 60) % 60)
-        let hours = Math.floor(avg / 3600)
-        if (hours > 0) {
-            avg_p.innerText = `${hours}h ${minutes}min ${seconds}s`
+        let hours = Math.floor(avg / 3600 * 10) / 10
+        if (hours >= 1) {
+            avg_p.innerText = `${hours} hrs`
         } else if (minutes > 0) {
-            avg_p.innerText = `${minutes}min ${seconds}s`
-        } else {
-            avg_p.innerText = `${seconds}s`
+            avg_p.innerText = `${minutes} mins`
         }
         container.append(avg_p)
 

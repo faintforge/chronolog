@@ -119,3 +119,27 @@ main {
     align-items: center;
     font-size: 1.0em;
 }
+
+#week {
+    background: #212121;
+    padding: 1em;
+    border-radius: 5px;
+    width: 100%;
+    max-width: 25em;
+}
+
+#week > .header {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+#week > .activity {
+    display: grid;
+    gap: 1em;
+    grid-template-rows: 1fr;
+    grid-template-columns: repeat(3, 1fr);
+    align-items: center;
+    font-size: 1.0em;
+}

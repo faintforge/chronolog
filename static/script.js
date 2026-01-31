@@ -4,6 +4,36 @@ mermaid.initialize({ theme: "dark" })
 let timestamps = []
 let displayed_day = new Date(Date.now())
 
+Date.prototype.getWeekNumber = function() {
+    let date = new Date(this);
+    date.setTime(date.getTime() - (date.getISODay())*24*60*60*1000)
+    let year_start = new Date()
+    year_start.setHours(0, 0, 0)
+    year_start.setFullYear(date.getFullYear(), 0, 1)
+
+    let diff = date.getTime() - year_start.getTime()
+    let MILLISECONDS_IN_WEEK = 1000*60*60*24*7
+    return Math.ceil(diff / MILLISECONDS_IN_WEEK + 1)
+}
+
+Date.prototype.getDayString = function () {
+    // I'm sorry for this
+    return [
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+        "sunday"
+    ][this.getISODay()]
+}
+
+// ISO 8601 says Monday is the first day (which it is).
+Date.prototype.getISODay = function() {
+    return (this.getDay() + 6) % 7
+}
+
 function displayEvents() {
     // Add a temporary timestamp of current time so you get up-to-date data on
     // the current activity.
@@ -81,7 +111,7 @@ function getEventsInSpan(start, end) {
         }
 
         if (curr.posix > end_time) {
-            continue
+            break
         }
 
         // Clone the event since it's passed by reference by default so if an
@@ -171,7 +201,7 @@ function displayDaysEvents(day) {
         let time_p = document.createElement("p")
         let seconds = Math.floor(total % 60)
         let minutes = Math.floor((total / 60) % 60)
-        let hours = Math.floor((total / 3600) % 60)
+        let hours = Math.floor(total / 3600)
         if (hours > 0) {
             time_p.innerText = `${hours}h ${minutes}min ${seconds}s`
         } else if (minutes > 0) {
@@ -245,6 +275,96 @@ function changeDay(delta) {
     const MILLISECONDS_IN_DAY = 24*60*60*1000;
     displayed_day = new Date(displayed_day.getTime() + MILLISECONDS_IN_DAY*delta)
     displayDaysEvents(displayed_day)
+
+    weekAverage()
+}
+
+function getDateString(date) {
+    let year_str = String(date.getFullYear()).padStart(2, "0")
+    let month_str = String(date.getMonth() + 1).padStart(2, "0")
+    let day_str = String(date.getDate()).padStart(2, "0")
+    return `${year_str}/${month_str}/${day_str}`
+}
+
+function weekAverage() {
+    let today = displayed_day
+    let day_of_week = today.getISODay()
+
+    let first_day_of_week = new Date(today.getTime() - (day_of_week)*24*60*60*1000)
+    first_day_of_week.setHours(0, 0, 0)
+
+    let last_day_of_week = new Date(first_day_of_week.getTime() + 7*24*60*60*1000)
+
+    let span_start = first_day_of_week
+    let span_end
+    if (last_day_of_week.getTime() < Date.now()) {
+        span_end = last_day_of_week
+    } else {
+        span_end = new Date()
+    }
+
+    let days_passed = span_end.getTime() - span_start.getTime()
+    days_passed /= 1000*60*60*24
+
+    let events = getEventsInSpan(span_start, span_end)
+
+    let weekly_activity = new Map()
+    for (let i = 0; i < events.length - 1; i++) {
+        let curr = events[i]
+        let diff = events[i+1].posix - curr.posix
+        let old = weekly_activity.get(curr.activity)
+        if (old == undefined) {
+            old = 0.0
+        }
+        weekly_activity.set(curr.activity, old + diff)
+    }
+
+    let week_container = document.getElementById("week")
+    while (week_container.lastChild) {
+        week_container.removeChild(week_container.lastChild)
+    }
+
+    let header = document.createElement("div")
+    header.classList.add("header")
+
+    let date_h2 = document.createElement("h2")
+    if (span_end.getTime() < Date.now()) {
+        span_end.setTime(span_end.getTime() - 24*60*60*1000)
+    }
+    date_h2.innerText = `${getDateString(span_start)} to ${getDateString(span_end)}`
+    header.append(date_h2)
+
+    week_container.append(header)
+
+    weekly_activity.forEach((total, activity) => {
+        let container = document.createElement("div")
+        container.classList.add("activity")
+
+        let activity_p = document.createElement("p")
+        activity_p.innerText = activity
+        container.append(activity_p)
+
+        let percent_p = document.createElement("p")
+        let percent = Math.round(total / (days_passed*24*60*60) * 1000) / 10
+        percent_p.innerText = `${percent.toString()}%`
+        container.append(percent_p)
+
+        let avg_p = document.createElement("p")
+        let avg = total / days_passed
+        let seconds = Math.floor(avg % 60)
+        let minutes = Math.floor((avg / 60) % 60)
+        let hours = Math.floor(avg / 3600)
+        if (hours > 0) {
+            avg_p.innerText = `${hours}h ${minutes}min ${seconds}s`
+        } else if (minutes > 0) {
+            avg_p.innerText = `${minutes}min ${seconds}s`
+        } else {
+            avg_p.innerText = `${seconds}s`
+        }
+        container.append(avg_p)
+
+        week_container.append(container)
+    })
 }
 
 fetch("api/activity", {method: "GET"})
@@ -265,4 +385,5 @@ fetch("api/activity", {method: "GET"})
     setCurrentActivity()
     displayEvents()
     displayDaysEvents(displayed_day)
+    weekAverage()
 })

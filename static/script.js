@@ -51,12 +51,6 @@ function displayEvents() {
         let curr = timestamps[i]
         let next = timestamps[i + 1]
 
-        let total = next.posix - curr.posix
-
-        let seconds = Math.floor(total % 60);
-        let minutes = Math.floor((total / 60) % 60)
-        let hours = Math.floor((total / 3600))
-
         let div = document.createElement("div")
         div.classList.add("logged-activity")
 
@@ -65,19 +59,18 @@ function displayEvents() {
         div.append(header)
 
         let time = document.createElement("p")
-        if (hours > 0) {
-            time.innerText += hours.toString() + " hrs"
+
+        let total = next.posix - curr.posix
+        let seconds = Math.floor(total % 60)
+        let minutes = Math.floor((total / 60) % 60)
+        let hours = Math.floor((total / 3600))
+        if (hours >= 1) {
+            time.innerText = `${hours}h ${minutes}m`
+        } else if (minutes > 0) {
+            time.innerText = `${minutes}m`
+        } else {
+            time.innerText = `${seconds}s`
         }
-        if (minutes > 0) {
-            if (time.innerHTML.length > 0) {
-                time.innerHTML += " "
-            }
-            time.innerHTML += minutes.toString() + " mins"
-        }
-        if (time.innerHTML.length > 0) {
-            time.innerHTML += " "
-        }
-        time.innerHTML += seconds.toString() + " secs"
         div.append(time)
 
         container.append(div)
@@ -197,18 +190,20 @@ function displayDaysEvents(day) {
         let percent_p = document.createElement("p")
         let percent = Math.round(total / total_time_tracked * 1000) / 10
         percent_p.innerText = `${percent.toString()}%`
+        percent_p.classList.add("num")
         container.append(percent_p)
 
         let time_p = document.createElement("p")
         let minutes = Math.floor((total / 60) % 60)
         let hours = Math.floor(total / 3600 * 10) / 10
         if (hours >= 1) {
-            time_p.innerText = `${hours} hrs`
+            time_p.innerText = `${hours}h ${minutes}m`
         } else if (minutes > 0) {
-            time_p.innerText = `${minutes} mins`
+            time_p.innerText = `${minutes}m`
         } else {
-            time_p.innerText = `${minutes} sec`
+            time_p.innerText = `${minutes}s`
         }
+        time_p.classList.add("num")
         container.append(time_p)
 
         day_container.append(container)
@@ -352,17 +347,19 @@ function weekAverage() {
         let percent_p = document.createElement("p")
         let percent = Math.round(total / (days_passed*24*60*60) * 1000) / 10
         percent_p.innerText = `${percent.toString()}%`
+        percent_p.classList.add("num")
         container.append(percent_p)
 
         let avg_p = document.createElement("p")
         let avg = total / days_passed
         let minutes = Math.floor((avg / 60) % 60)
-        let hours = Math.floor(avg / 3600 * 10) / 10
+        let hours = Math.floor(avg / 3600)
         if (hours >= 1) {
-            avg_p.innerText = `${hours} hrs`
+            avg_p.innerText = `${hours}h ${minutes}m/day`
         } else if (minutes > 0) {
-            avg_p.innerText = `${minutes} mins`
+            avg_p.innerText = `${minutes}m/day`
         }
+        avg_p.classList.add("num")
         container.append(avg_p)
 
         week_container.append(container)

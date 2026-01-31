@@ -126,6 +126,9 @@ main {
     border-radius: 5px;
     width: 100%;
     max-width: 25em;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
 }
 
 #week > .header {
@@ -142,4 +145,8 @@ main {
     grid-template-columns: repeat(3, 1fr);
     align-items: center;
     font-size: 1.0em;
+}
+
+.num {
+    font-family: "Roboto Mono", monospace;
 }

@@ -195,7 +195,7 @@ function displayDaysEvents(day) {
 
         let time_p = document.createElement("p")
         let minutes = Math.floor((total / 60) % 60)
-        let hours = Math.floor(total / 3600 * 10) / 10
+        let hours = Math.floor(total / 3600)
         if (hours >= 1) {
             time_p.innerText = `${hours}h ${minutes}m`
         } else if (minutes > 0) {
